@@ -1,0 +1,28 @@
+{
+    "name": "audio-chapters-generator",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "dev": "webpack --mode development",
+        "prod": "webpack --mode production"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/mateuszmagier/Audio-Chapters-Generator.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/mateuszmagier/Audio-Chapters-Generator/issues"
+    },
+    "homepage": "https://github.com/mateuszmagier/Audio-Chapters-Generator#readme",
+    "devDependencies": {
+        "babel-core": "^6.26.3",
+        "babel-loader": "^7.1.5",
+        "babel-preset-env": "^1.7.0",
+        "webpack": "^4.21.0",
+        "webpack-cli": "^3.1.2"
+    }
+}
