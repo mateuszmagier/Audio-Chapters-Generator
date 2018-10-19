@@ -146,10 +146,10 @@ var AudioFileModel = exports.AudioFileModel = function () {
 
 /***/ }),
 
-/***/ "./src/js/AudioFilesController.js":
-/*!****************************************!*\
-  !*** ./src/js/AudioFilesController.js ***!
-  \****************************************/
+/***/ "./src/js/AudioTimestampsGenerator.js":
+/*!********************************************!*\
+  !*** ./src/js/AudioTimestampsGenerator.js ***!
+  \********************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -159,26 +159,58 @@ var AudioFileModel = exports.AudioFileModel = function () {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+exports.AudioTimestampsGenerator = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _AudioFileModel = __webpack_require__(/*! ./AudioFileModel */ "./src/js/AudioFileModel.js");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 /*
-    files: File objects collection
+    filesInputSelector: iCSS selector of audio files input
 */
-var AudioFilesController = exports.AudioFilesController = function () {
-    function AudioFilesController(files) {
-        _classCallCheck(this, AudioFilesController);
+var AudioTimestampsGenerator = exports.AudioTimestampsGenerator = function () {
+    function AudioTimestampsGenerator(filesInputSelector) {
+        _classCallCheck(this, AudioTimestampsGenerator);
 
-        this.obtainedDurations = 0;
-        this.attachedFilesNumber = files.length;
+        this.input = document.querySelector(filesInputSelector); // input element used to attach audio files
+        this.obtainedDurations = 0; // number of known durations of audio files
+        this.attachedFilesNumber = 0; // number of files attached by user
+        this.models = []; // array of AudioFileModel objects
+        this.views = []; // array of AudioFileView objects
+
+        if (this.input === null) {
+            console.log("Nieprawidłowy selektor");
+        }
+
+        this.handleFilesUpload(); // register change event for files input
     }
 
-    // method called by AudioFileModel objects when audio's duration is obtained
+    // read files attached by user and create AudioFileModel objects for each of them
 
 
-    _createClass(AudioFilesController, [{
+    _createClass(AudioTimestampsGenerator, [{
+        key: "handleFilesUpload",
+        value: function handleFilesUpload() {
+            var _this = this;
+
+            this.input.addEventListener("change", function (e) {
+                var files = e.target.files; // File objects collection (files attached by user)
+                var model; // AudioFileModel object
+                _this.attachedFilesNumber = files.length;
+
+                [].forEach.call(files, function (file) {
+                    // create model object for each attached file
+                    model = new _AudioFileModel.AudioFileModel(file, _this);
+                    _this.models.push(model); // add model object to collection
+                });
+            });
+        }
+
+        // method called by AudioFileModel objects when audio's duration is obtained
+
+    }, {
         key: "incrementObtainedDurations",
         value: function incrementObtainedDurations() {
             this.obtainedDurations++;
@@ -188,7 +220,7 @@ var AudioFilesController = exports.AudioFilesController = function () {
         }
     }]);
 
-    return AudioFilesController;
+    return AudioTimestampsGenerator;
 }();
 
 /***/ }),
@@ -203,31 +235,11 @@ var AudioFilesController = exports.AudioFilesController = function () {
 "use strict";
 
 
-var _AudioFilesController = __webpack_require__(/*! ./AudioFilesController */ "./src/js/AudioFilesController.js");
-
-var _AudioFileModel = __webpack_require__(/*! ./AudioFileModel */ "./src/js/AudioFileModel.js");
+var _AudioTimestampsGenerator = __webpack_require__(/*! ./AudioTimestampsGenerator */ "./src/js/AudioTimestampsGenerator.js");
 
 document.addEventListener("DOMContentLoaded", function () {
 
-    var input = document.querySelector("#files-input"); // files input used to load audio files
-    var model = null,
-        // AudioFileModel object
-    models = [],
-        // array of AudioFileModel objects
-    controller = null; // AudioFilesController object
-
-    // user attached audio files
-    input.addEventListener("change", function (e) {
-        var files = e.target.files; // File objects collection (files attached by user)
-
-        controller = new _AudioFilesController.AudioFilesController(files);
-
-        [].forEach.call(files, function (file) {
-            // create model object for each attached file
-            model = new _AudioFileModel.AudioFileModel(file, controller);
-            models.push(model); // add model object to collection
-        });
-    });
+    var atg = new _AudioTimestampsGenerator.AudioTimestampsGenerator("#files-input");
 });
 
 /***/ })
