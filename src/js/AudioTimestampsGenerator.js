@@ -32,12 +32,27 @@ export class AudioTimestampsGenerator {
             });
         });
     }
+    
+    // calculate timestamps for each audio file
+    calculateTimestamps() {
+        console.log("Obliczam timestamps.");
+        var timestamp = 0;
+        [].forEach.call(this.models, model => {
+            model.setTimestamp(timestamp);
+            timestamp += model.getDuration();
+            model.printDuration();
+        });
+        
+        console.log(`Czas całkowity: ${timestamp}`);
+    }
 
     // method called by AudioFileModel objects when audio's duration is obtained
     incrementObtainedDurations() {
         this.obtainedDurations++;
         console.log(this.obtainedDurations);
-        if (this.obtainedDurations === this.attachedFilesNumber) // check if model objects are ready to generate timestamps
+        if (this.obtainedDurations === this.attachedFilesNumber) { // check if model objects are ready to generate timestamps
             console.log("Załadowano wszystkie.");
+            this.calculateTimestamps();
+        }
     }
 }

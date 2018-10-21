@@ -139,6 +139,24 @@ var AudioFileModel = exports.AudioFileModel = function () {
                 _this.controller.incrementObtainedDurations();
             });
         }
+    }, {
+        key: "setTimestamp",
+        value: function setTimestamp(timestamp) {
+            this.timestamp = timestamp;
+        }
+    }, {
+        key: "getDuration",
+        value: function getDuration() {
+            return this.duration;
+        }
+    }, {
+        key: "printDuration",
+        value: function printDuration() {
+            console.log(this.timestamp + " " + this.filename);
+        }
+    }, {
+        key: "calculateTimestamp",
+        value: function calculateTimestamp(prevTimestamp) {}
     }]);
 
     return AudioFileModel;
@@ -208,6 +226,22 @@ var AudioTimestampsGenerator = exports.AudioTimestampsGenerator = function () {
             });
         }
 
+        // calculate timestamps for each audio file
+
+    }, {
+        key: "calculateTimestamps",
+        value: function calculateTimestamps() {
+            console.log("Obliczam timestamps.");
+            var timestamp = 0;
+            [].forEach.call(this.models, function (model) {
+                model.setTimestamp(timestamp);
+                timestamp += model.getDuration();
+                model.printDuration();
+            });
+
+            console.log("Czas ca\u0142kowity: " + timestamp);
+        }
+
         // method called by AudioFileModel objects when audio's duration is obtained
 
     }, {
@@ -215,8 +249,11 @@ var AudioTimestampsGenerator = exports.AudioTimestampsGenerator = function () {
         value: function incrementObtainedDurations() {
             this.obtainedDurations++;
             console.log(this.obtainedDurations);
-            if (this.obtainedDurations === this.attachedFilesNumber) // check if model objects are ready to generate timestamps
+            if (this.obtainedDurations === this.attachedFilesNumber) {
+                // check if model objects are ready to generate timestamps
                 console.log("Załadowano wszystkie.");
+                this.calculateTimestamps();
+            }
         }
     }]);
 

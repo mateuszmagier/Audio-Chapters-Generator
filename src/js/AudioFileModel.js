@@ -28,4 +28,20 @@ export class AudioFileModel {
             this.controller.incrementObtainedDurations();
         });
     }
+    
+    setTimestamp(timestamp) {
+        this.timestamp = timestamp;
+    }
+    
+    getDuration() {
+        return this.duration;
+    }
+    
+    printDuration() {
+        console.log(`${this.timestamp} ${this.filename}`);
+    }
+    
+    calculateTimestamp(prevTimestamp) {
+        
+    }
 }
