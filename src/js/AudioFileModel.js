@@ -2,7 +2,7 @@
     audioFile: File object,
     audioController: AudioFilesController object
 */
-export class AudioFileModel {
+class AudioFileModel {
     
     constructor(audioFile, audioController) {
         this.file = audioFile;
@@ -45,3 +45,5 @@ export class AudioFileModel {
         
     }
 }
+
+export { AudioFileModel }

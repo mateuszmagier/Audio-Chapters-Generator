@@ -108,7 +108,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     audioFile: File object,
     audioController: AudioFilesController object
 */
-var AudioFileModel = exports.AudioFileModel = function () {
+var AudioFileModel = function () {
     function AudioFileModel(audioFile, audioController) {
         _classCallCheck(this, AudioFileModel);
 
@@ -162,6 +162,8 @@ var AudioFileModel = exports.AudioFileModel = function () {
     return AudioFileModel;
 }();
 
+exports.AudioFileModel = AudioFileModel;
+
 /***/ }),
 
 /***/ "./src/js/AudioTimestampsGenerator.js":
@@ -188,7 +190,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 /*
     filesInputSelector: iCSS selector of audio files input
 */
-var AudioTimestampsGenerator = exports.AudioTimestampsGenerator = function () {
+var AudioTimestampsGenerator = function () {
     function AudioTimestampsGenerator(filesInputSelector) {
         _classCallCheck(this, AudioTimestampsGenerator);
 
@@ -259,6 +261,8 @@ var AudioTimestampsGenerator = exports.AudioTimestampsGenerator = function () {
 
     return AudioTimestampsGenerator;
 }();
+
+exports.AudioTimestampsGenerator = AudioTimestampsGenerator;
 
 /***/ }),
 

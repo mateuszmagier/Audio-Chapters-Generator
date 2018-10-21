@@ -3,7 +3,7 @@ import { AudioFileModel } from './AudioFileModel';
 /*
     filesInputSelector: iCSS selector of audio files input
 */
-export class AudioTimestampsGenerator {
+class AudioTimestampsGenerator {
 
     constructor(filesInputSelector) {
         this.input = document.querySelector(filesInputSelector); // input element used to attach audio files
@@ -56,3 +56,5 @@ export class AudioTimestampsGenerator {
         }
     }
 }
+
+export { AudioTimestampsGenerator };
