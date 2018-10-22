@@ -116,6 +116,7 @@ var AudioFileModel = function () {
         this.filename = this.file.name;
         this.duration = 0;
         this.timestamp = 0;
+        this.convertedTimestamp = "";
         this.controller = audioController;
 
         this.waitForDuration(); // register event for audio element
@@ -145,6 +146,11 @@ var AudioFileModel = function () {
             this.timestamp = timestamp;
         }
     }, {
+        key: "setConvertedTimestamp",
+        value: function setConvertedTimestamp(convertedTimestamp) {
+            this.convertedTimestamp = convertedTimestamp;
+        }
+    }, {
         key: "getDuration",
         value: function getDuration() {
             return this.duration;
@@ -152,11 +158,8 @@ var AudioFileModel = function () {
     }, {
         key: "printDuration",
         value: function printDuration() {
-            console.log(this.timestamp + " " + this.filename);
+            console.log(this.timestamp + " " + this.convertedTimestamp + " " + this.filename);
         }
-    }, {
-        key: "calculateTimestamp",
-        value: function calculateTimestamp(prevTimestamp) {}
     }]);
 
     return AudioFileModel;
@@ -185,6 +188,8 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _AudioFileModel = __webpack_require__(/*! ./AudioFileModel */ "./src/js/AudioFileModel.js");
 
+var _DurationHelper = __webpack_require__(/*! ./DurationHelper */ "./src/js/DurationHelper.js");
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 /*
@@ -211,7 +216,7 @@ var AudioTimestampsGenerator = function () {
 
 
     _createClass(AudioTimestampsGenerator, [{
-        key: "handleFilesUpload",
+        key: 'handleFilesUpload',
         value: function handleFilesUpload() {
             var _this = this;
 
@@ -231,23 +236,25 @@ var AudioTimestampsGenerator = function () {
         // calculate timestamps for each audio file
 
     }, {
-        key: "calculateTimestamps",
+        key: 'calculateTimestamps',
         value: function calculateTimestamps() {
             console.log("Obliczam timestamps.");
+            var durationHelper = new _DurationHelper.DurationHelper(); // default options
             var timestamp = 0;
             [].forEach.call(this.models, function (model) {
                 model.setTimestamp(timestamp);
+                model.setConvertedTimestamp(durationHelper.getTimestamp(timestamp));
                 timestamp += model.getDuration();
                 model.printDuration();
             });
 
-            console.log("Czas ca\u0142kowity: " + timestamp);
+            console.log('Czas ca\u0142kowity: ' + timestamp);
         }
 
         // method called by AudioFileModel objects when audio's duration is obtained
 
     }, {
-        key: "incrementObtainedDurations",
+        key: 'incrementObtainedDurations',
         value: function incrementObtainedDurations() {
             this.obtainedDurations++;
             console.log(this.obtainedDurations);
@@ -263,6 +270,98 @@ var AudioTimestampsGenerator = function () {
 }();
 
 exports.AudioTimestampsGenerator = AudioTimestampsGenerator;
+
+/***/ }),
+
+/***/ "./src/js/DurationHelper.js":
+/*!**********************************!*\
+  !*** ./src/js/DurationHelper.js ***!
+  \**********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/*
+    helper class; converts duration in seconds into HH:MM:SS format
+*/
+
+var DurationHelper = function () {
+    function DurationHelper(options) {
+        _classCallCheck(this, DurationHelper);
+
+        var defaultOptions = {
+            zeroPrefix: true, // add "0" before elements less than 10 - all elements have 2 digits
+            includeHours: true // forces generating timestamp in HH:MM:SS format
+        };
+        this.options = Object.assign({}, defaultOptions, options);
+    }
+
+    // helper method: adds "0" prefix before numbers < 10
+
+
+    _createClass(DurationHelper, [{
+        key: "prefixZero",
+        value: function prefixZero(number) {
+            if (number < 0) throw new RangeError("Number must be not less than 0.");
+            if (number > 99) throw new RangeError("Number must be less than 100.");
+            var prefix = "";
+            if (number < 10 && this.options.zeroPrefix) prefix = "0";
+            return prefix + number;
+        }
+
+        // helper method: calculates: hours, minutes and seconds number for given duration in seconds
+
+    }, {
+        key: "calculateTimestamp",
+        value: function calculateTimestamp(duration) {
+            var hrs, mins, secs;
+            var durationLeft = Math.floor(duration); // convert to integer
+
+            hrs = Math.floor(durationLeft / 3600);
+            durationLeft -= hrs * 3600;
+
+            mins = Math.floor(durationLeft / 60);
+            durationLeft -= mins * 60;
+
+            secs = durationLeft;
+
+            return [hrs, mins, secs];
+        }
+
+        // main function converting duration to [HH:]MM:SS format
+
+    }, {
+        key: "getTimestamp",
+        value: function getTimestamp(duration) {
+            var timestamp; // duration converted to format: [HH:]MM:SS
+
+            var _calculateTimestamp = this.calculateTimestamp(duration),
+                _calculateTimestamp2 = _slicedToArray(_calculateTimestamp, 3),
+                hrs = _calculateTimestamp2[0],
+                mins = _calculateTimestamp2[1],
+                secs = _calculateTimestamp2[2];
+
+            timestamp = this.prefixZero(hrs) + ":" + this.prefixZero(mins) + ":" + this.prefixZero(secs);
+            return timestamp;
+        }
+    }]);
+
+    return DurationHelper;
+}();
+
+exports.DurationHelper = DurationHelper;
 
 /***/ }),
 

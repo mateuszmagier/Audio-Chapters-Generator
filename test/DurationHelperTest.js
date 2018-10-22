@@ -113,40 +113,24 @@ QUnit.test("CalculateTimestampTest_DurationIsCorrect_TimestampElementsAreCorrect
     assert.deepEqual(object.calculateTimestamp(3600), [1,0,0], "calculateTimestamp returns 1hrs 0mins 0secs for duration 3600s.");
     assert.deepEqual(object.calculateTimestamp(3629), [1,0,29], "calculateTimestamp returns 1hrs 0mins 29secs for duration 3629s.");
     assert.deepEqual(object.calculateTimestamp(3600.7854), [1,0,0], "calculateTimestamp returns correct values for float duration.");
+    assert.deepEqual(object.calculateTimestamp(8397.1234), [2,19,57], "calculateTimestamp returns 2hrs 19mins 57secs for duration 8397.1234s.");
 });
 
-///*
-//    ===========================================
-//    CALCULATEHOURS TESTS
-//    ===========================================
-//*/
-//
-//QUnit.test("CalculateHoursTest_DurationIsCorrect_HoursNumberIsCorrect", assert => {
-//    var object = new DurationHelper({}); // default options
-//
-//    assert.equal(object.calculateHours(0), 0, "calculateHours returns 0 hours for duration 0s.");
-//    assert.equal(object.calculateHours(50), 0, "calculateHours returns 0 hours for duration shorter than 1min.");
-//    assert.equal(object.calculateHours(70), 0, "calculateHours returns 0 hours for duration longer than 1min.");
-//    assert.equal(object.calculateHours(3599), 0, "calculateHours returns 0 hours for duration 3599s.");
-//    assert.equal(object.calculateHours(3600), 1, "calculateHours returns 1 hours for duration 1hr.");
-//    assert.equal(object.calculateHours(3605.36743), 1, "calculateHours returns correct hours number for float duration.");
-//    assert.equal(object.calculateHours(11342.11243), 3, "calculateHours returns 3 hours for duration 3hrs 9mins 2s.");
-//});
-//
-//
-///*
-//    ===========================================
-//    CALCULATEMINUTES TESTS
-//    ===========================================
-//*/
-//
-//QUnit.test("CalculateMinutesTest_DurationIsCorrect_MinutesNumberIsCorrect", assert => {
-//    var object = new DurationHelper({}); // default options
-//
-//    assert.equal(object.calculateMinutes(0), 0, "calculateMinutes returns 0 minutes for duration 0s.");
-//    assert.equal(object.calculateMinutes(1), 0, "calculateMinutes returns 0 minutes for duration 1s.");
-//    assert.equal(object.calculateMinutes(59), 0, "calculateMinutes returns 0 minutes for duration 59s.");
-//    assert.equal(object.calculateMinutes(60), 1, "calculateMinutes returns 1 minutes for duration 60s.");
-//    assert.equal(object.calculateMinutes(65.36298), 1, "calculateMinutes returns correct minutes number for float duration.");
-//    assert.equal(object.calculateMinutes(469.23453), 7, "calculateHours returns 7 minutes for duration 7mins 49s.");
-//});
+/*
+    ===========================================
+    GETTIMESTAMP TESTS
+    ===========================================
+*/
+
+QUnit.test("GetTimestampTest_DurationIsCorrect_TimestampElementsAreCorrect", assert => {
+    var object = new DurationHelper({}); // default options
+
+    assert.equal(object.getTimestamp(0), "00:00:00", "getTimestamp returns 00:00:00 for duration 0s.");
+    assert.equal(object.getTimestamp(1), "00:00:01", "getTimestamp returns 00:00:01 for duration 1s.");
+    assert.equal(object.getTimestamp(60), "00:01:00", "getTimestamp returns 00:01:00 for duration 60s.");
+    assert.equal(object.getTimestamp(3600), "01:00:00", "getTimestamp returns 01:00:00 for duration 3600s.");
+    assert.equal(object.getTimestamp(3629), "01:00:29", "getTimestamp returns 01:00:29 for duration 3629s.");
+    assert.equal(object.getTimestamp(3600.7854), "01:00:00", "getTimestamp returns correct values for float duration.");
+    assert.equal(object.getTimestamp(8397.1234), "02:19:57", "getTimestamp returns 02:19:57 for duration 8397.1234s.");
+});
+

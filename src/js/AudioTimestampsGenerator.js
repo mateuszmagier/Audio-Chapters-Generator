@@ -1,4 +1,5 @@
 import { AudioFileModel } from './AudioFileModel';
+import { DurationHelper } from './DurationHelper';
 
 /*
     filesInputSelector: iCSS selector of audio files input
@@ -36,9 +37,11 @@ class AudioTimestampsGenerator {
     // calculate timestamps for each audio file
     calculateTimestamps() {
         console.log("Obliczam timestamps.");
+        var durationHelper = new DurationHelper(); // default options
         var timestamp = 0;
         [].forEach.call(this.models, model => {
             model.setTimestamp(timestamp);
+            model.setConvertedTimestamp(durationHelper.getTimestamp(timestamp));
             timestamp += model.getDuration();
             model.printDuration();
         });

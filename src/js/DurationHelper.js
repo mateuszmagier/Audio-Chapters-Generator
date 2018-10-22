@@ -39,9 +39,13 @@ class DurationHelper {
         return [hrs, mins, secs];
     }
 
+    // main function converting duration to [HH:]MM:SS format
     getTimestamp(duration) {
-
+        var timestamp; // duration converted to format: [HH:]MM:SS
+        var [hrs, mins, secs] = this.calculateTimestamp(duration);
+        timestamp = `${this.prefixZero(hrs)}:${this.prefixZero(mins)}:${this.prefixZero(secs)}`;
+        return timestamp;
     }
 }
 
-//export { DurationHelper }
+export { DurationHelper }

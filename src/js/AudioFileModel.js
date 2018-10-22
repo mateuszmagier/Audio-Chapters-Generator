@@ -9,6 +9,7 @@ class AudioFileModel {
         this.filename = this.file.name;
         this.duration = 0;
         this.timestamp = 0;
+        this.convertedTimestamp = "";
         this.controller = audioController;
 
         this.waitForDuration(); // register event for audio element
@@ -33,20 +34,16 @@ class AudioFileModel {
         this.timestamp = timestamp;
     }
     
+    setConvertedTimestamp(convertedTimestamp) {
+        this.convertedTimestamp = convertedTimestamp;
+    }
+    
     getDuration() {
         return this.duration;
     }
     
     printDuration() {
-        console.log(`${this.timestamp} ${this.filename}`);
-    }
-    
-    convertTimestamp() {
-        
-    }
-    
-    calculateTimestamp(prevTimestamp) {
-        
+        console.log(`${this.timestamp} ${this.convertedTimestamp} ${this.filename}`);
     }
 }
 
