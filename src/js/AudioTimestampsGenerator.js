@@ -1,5 +1,6 @@
 import { AudioFileModel } from './AudioFileModel';
 import { DurationHelper } from './DurationHelper';
+import { AudioFileView } from './AudioFileView';
 
 /*
     filesInputSelector: iCSS selector of audio files input
@@ -48,6 +49,19 @@ class AudioTimestampsGenerator {
         
         console.log(`Czas całkowity: ${timestamp}`);
     }
+    
+    createViews() {
+        let container = document.createElement("div");
+        let view; // AudioFileView object
+        container.classList.add("audiofiles-container");
+        container.setAttribute("contenteditable", true);
+        [].forEach.call(this.models, model => {
+            view = new AudioFileView(model);
+            container.appendChild(view.createElement());
+            this.views.push(view);
+        });
+        document.querySelector("body").appendChild(container);
+    }
 
     // method called by AudioFileModel objects when audio's duration is obtained
     incrementObtainedDurations() {
@@ -56,6 +70,7 @@ class AudioTimestampsGenerator {
         if (this.obtainedDurations === this.attachedFilesNumber) { // check if model objects are ready to generate timestamps
             console.log("Załadowano wszystkie.");
             this.calculateTimestamps();
+            this.createViews();
         }
     }
 }

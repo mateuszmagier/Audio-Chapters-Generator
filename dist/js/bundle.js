@@ -169,6 +169,49 @@ exports.AudioFileModel = AudioFileModel;
 
 /***/ }),
 
+/***/ "./src/js/AudioFileView.js":
+/*!*********************************!*\
+  !*** ./src/js/AudioFileView.js ***!
+  \*********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var AudioFileView = function () {
+    function AudioFileView(model) {
+        _classCallCheck(this, AudioFileView);
+
+        this.model = model;
+    }
+
+    _createClass(AudioFileView, [{
+        key: "createElement",
+        value: function createElement() {
+            var element = document.createElement("div");
+            element.classList.add(".audiofile");
+            //        element.setAttribute("contenteditable", true);
+            element.innerText = this.model.convertedTimestamp + " " + this.model.filename;
+            return element;
+        }
+    }]);
+
+    return AudioFileView;
+}();
+
+exports.AudioFileView = AudioFileView;
+
+/***/ }),
+
 /***/ "./src/js/AudioTimestampsGenerator.js":
 /*!********************************************!*\
   !*** ./src/js/AudioTimestampsGenerator.js ***!
@@ -189,6 +232,8 @@ var _createClass = function () { function defineProperties(target, props) { for 
 var _AudioFileModel = __webpack_require__(/*! ./AudioFileModel */ "./src/js/AudioFileModel.js");
 
 var _DurationHelper = __webpack_require__(/*! ./DurationHelper */ "./src/js/DurationHelper.js");
+
+var _AudioFileView = __webpack_require__(/*! ./AudioFileView */ "./src/js/AudioFileView.js");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -250,6 +295,22 @@ var AudioTimestampsGenerator = function () {
 
             console.log('Czas ca\u0142kowity: ' + timestamp);
         }
+    }, {
+        key: 'createViews',
+        value: function createViews() {
+            var _this2 = this;
+
+            var container = document.createElement("div");
+            var view = void 0; // AudioFileView object
+            container.classList.add("audiofiles-container");
+            container.setAttribute("contenteditable", true);
+            [].forEach.call(this.models, function (model) {
+                view = new _AudioFileView.AudioFileView(model);
+                container.appendChild(view.createElement());
+                _this2.views.push(view);
+            });
+            document.querySelector("body").appendChild(container);
+        }
 
         // method called by AudioFileModel objects when audio's duration is obtained
 
@@ -262,6 +323,7 @@ var AudioTimestampsGenerator = function () {
                 // check if model objects are ready to generate timestamps
                 console.log("Załadowano wszystkie.");
                 this.calculateTimestamps();
+                this.createViews();
             }
         }
     }]);
