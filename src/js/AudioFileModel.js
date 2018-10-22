@@ -41,6 +41,10 @@ class AudioFileModel {
         console.log(`${this.timestamp} ${this.filename}`);
     }
     
+    convertTimestamp() {
+        
+    }
+    
     calculateTimestamp(prevTimestamp) {
         
     }
