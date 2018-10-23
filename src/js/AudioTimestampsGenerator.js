@@ -1,6 +1,15 @@
-import { AudioFileModel } from './AudioFileModel';
-import { DurationHelper } from './DurationHelper';
-import { AudioFileView } from './AudioFileView';
+import {
+    AudioFileModel
+} from './AudioFileModel';
+import {
+    DurationHelper
+} from './DurationHelper';
+import {
+    AudioFileView
+} from './AudioFileView';
+import {
+    Settings
+} from './Settings';
 
 /*
     filesInputSelector: iCSS selector of audio files input
@@ -13,6 +22,7 @@ class AudioTimestampsGenerator {
         this.attachedFilesNumber = 0; // number of files attached by user
         this.models = []; // array of AudioFileModel objects
         this.views = []; // array of AudioFileView objects
+        this.settings = null;
 
         if (this.input === null) {
             console.log("Nieprawidłowy selektor");
@@ -34,7 +44,7 @@ class AudioTimestampsGenerator {
             });
         });
     }
-    
+
     // calculate timestamps for each audio file
     calculateTimestamps() {
         console.log("Obliczam timestamps.");
@@ -46,21 +56,26 @@ class AudioTimestampsGenerator {
             timestamp += model.getDuration();
             model.printDuration();
         });
-        
+
         console.log(`Czas całkowity: ${timestamp}`);
     }
-    
+
     createViews() {
         let container = document.createElement("div");
         let view; // AudioFileView object
         container.classList.add("audiofiles-container");
-        container.setAttribute("contenteditable", true);
+        //        container.setAttribute("contenteditable", true);
         [].forEach.call(this.models, model => {
             view = new AudioFileView(model);
             container.appendChild(view.createElement());
             this.views.push(view);
         });
         document.querySelector("body").appendChild(container);
+        this.settings = new Settings(this);
+    }
+
+    changeExtensionVisibility(isVisible) {
+            [].forEach.call(this.views, view => view.setExtensionVisibility(isVisible));
     }
 
     // method called by AudioFileModel objects when audio's duration is obtained
@@ -75,4 +90,6 @@ class AudioTimestampsGenerator {
     }
 }
 
-export { AudioTimestampsGenerator };
+export {
+    AudioTimestampsGenerator
+};

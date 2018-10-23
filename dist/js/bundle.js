@@ -113,7 +113,9 @@ var AudioFileModel = function () {
         _classCallCheck(this, AudioFileModel);
 
         this.file = audioFile;
-        this.filename = this.file.name;
+        var audiofileSplit = this.file.name.split(".");
+        this.filename = audiofileSplit.slice(0, audiofileSplit.length - 1).join(".");
+        this.fileext = audiofileSplit[audiofileSplit.length - 1];
         this.duration = 0;
         this.timestamp = 0;
         this.convertedTimestamp = "";
@@ -192,16 +194,48 @@ var AudioFileView = function () {
         _classCallCheck(this, AudioFileView);
 
         this.model = model;
+        this.extension = null;
     }
 
     _createClass(AudioFileView, [{
+        key: "createTimestampElement",
+        value: function createTimestampElement() {
+            var element = document.createElement("span");
+            element.classList.add("audiofile-timestamp");
+            element.innerText = this.model.convertedTimestamp;
+            return element;
+        }
+    }, {
+        key: "createFilenameElement",
+        value: function createFilenameElement() {
+            var element = document.createElement("span");
+            element.classList.add("audiofile-filename");
+            element.innerText = this.model.filename;
+            return element;
+        }
+    }, {
+        key: "createExtensionElement",
+        value: function createExtensionElement() {
+            var element = document.createElement("span");
+            element.classList.add("audiofile-extension", "invisible");
+            element.innerText = "." + this.model.fileext;
+            this.extension = element;
+            return element;
+        }
+    }, {
         key: "createElement",
         value: function createElement() {
             var element = document.createElement("div");
-            element.classList.add(".audiofile");
-            //        element.setAttribute("contenteditable", true);
-            element.innerText = this.model.convertedTimestamp + " " + this.model.filename;
+            element.classList.add("audiofile");
+            element.appendChild(this.createTimestampElement());
+            element.appendChild(this.createFilenameElement());
+            element.appendChild(this.createExtensionElement());
             return element;
+        }
+    }, {
+        key: "setExtensionVisibility",
+        value: function setExtensionVisibility(isVisible) {
+            if (isVisible) this.extension.classList.add("visible");else this.extension.classList.remove("visible");
         }
     }]);
 
@@ -235,6 +269,8 @@ var _DurationHelper = __webpack_require__(/*! ./DurationHelper */ "./src/js/Dura
 
 var _AudioFileView = __webpack_require__(/*! ./AudioFileView */ "./src/js/AudioFileView.js");
 
+var _Settings = __webpack_require__(/*! ./Settings */ "./src/js/Settings.js");
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 /*
@@ -249,6 +285,7 @@ var AudioTimestampsGenerator = function () {
         this.attachedFilesNumber = 0; // number of files attached by user
         this.models = []; // array of AudioFileModel objects
         this.views = []; // array of AudioFileView objects
+        this.settings = null;
 
         if (this.input === null) {
             console.log("Nieprawidłowy selektor");
@@ -303,13 +340,21 @@ var AudioTimestampsGenerator = function () {
             var container = document.createElement("div");
             var view = void 0; // AudioFileView object
             container.classList.add("audiofiles-container");
-            container.setAttribute("contenteditable", true);
+            //        container.setAttribute("contenteditable", true);
             [].forEach.call(this.models, function (model) {
                 view = new _AudioFileView.AudioFileView(model);
                 container.appendChild(view.createElement());
                 _this2.views.push(view);
             });
             document.querySelector("body").appendChild(container);
+            this.settings = new _Settings.Settings(this);
+        }
+    }, {
+        key: 'changeExtensionVisibility',
+        value: function changeExtensionVisibility(isVisible) {
+            [].forEach.call(this.views, function (view) {
+                return view.setExtensionVisibility(isVisible);
+            });
         }
 
         // method called by AudioFileModel objects when audio's duration is obtained
@@ -424,6 +469,59 @@ var DurationHelper = function () {
 }();
 
 exports.DurationHelper = DurationHelper;
+
+/***/ }),
+
+/***/ "./src/js/Settings.js":
+/*!****************************!*\
+  !*** ./src/js/Settings.js ***!
+  \****************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/*
+    atg: AudioTimestampsGenerator object
+*/
+var Settings = function () {
+    function Settings(atg) {
+        _classCallCheck(this, Settings);
+
+        this.controller = atg;
+        this.settings = document.querySelector(".settings");
+        this.settings.classList.add("visible");
+
+        this.extensionVisibility = this.settings.querySelector("#settings-extension");
+
+        this.registerEvents();
+    }
+
+    _createClass(Settings, [{
+        key: "registerEvents",
+        value: function registerEvents() {
+            var _this = this;
+
+            //        this.extensionVisibility.addEventListener("click", () => console.log(this.extensionVisibility.checked));
+            this.extensionVisibility.addEventListener("click", function () {
+                return _this.controller.changeExtensionVisibility(_this.extensionVisibility.checked);
+            });
+        }
+    }]);
+
+    return Settings;
+}();
+
+exports.Settings = Settings;
 
 /***/ }),
 

@@ -6,7 +6,9 @@ class AudioFileModel {
     
     constructor(audioFile, audioController) {
         this.file = audioFile;
-        this.filename = this.file.name;
+        var audiofileSplit = this.file.name.split(".");
+        this.filename = audiofileSplit.slice(0,audiofileSplit.length-1).join(".");
+        this.fileext = audiofileSplit[audiofileSplit.length-1];
         this.duration = 0;
         this.timestamp = 0;
         this.convertedTimestamp = "";

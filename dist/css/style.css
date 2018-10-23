@@ -1,0 +1,13 @@
+.invisible {
+  display: none; }
+
+div.visible {
+  display: block; }
+
+span.visible {
+  display: inline; }
+
+.audiofile .audiofile-filename {
+  padding-left: 10px; }
+
+/*# sourceMappingURL=style.css.map */
