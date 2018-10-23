@@ -73,16 +73,17 @@ QUnit.test("PrefixZeroTest_PrefixZeroOptionIsTrue_ZeroIsAddedOnlyToNumbersLessTh
         },
         function (err) {
             return err.message === "Number must be not less than 0.";
+            return err.message === "Number must be not less than 0.";
         },
         "prefixZero throws error when number is less than 0.");
-    assert.throws(
-        function () {
-            object.prefixZero(100);
-        },
-        function (err) {
-            return err.message === "Number must be less than 100.";
-        },
-        "prefixZero throws error when number is greater than or equal to 100.");
+//    assert.throws(
+//        function () {
+//            object.prefixZero(100);
+//        },
+//        function (err) {
+//            return err.message === "Number must be less than 100.";
+//        },
+//        "prefixZero throws error when number is greater than or equal to 100.");
 });
 
 /*
@@ -104,7 +105,7 @@ QUnit.test("PrefixZeroTest_PrefixZeroOptionIsFalse_ZeroIsntAdded", assert => {
     ===========================================
 */
 
-QUnit.test("CalculateTimestampTest_DurationIsCorrect_TimestampElementsAreCorrect", assert => {
+QUnit.test("CalculateTimestampTest_IncludeHoursOptionIsTrue_TimestampElementsAreCorrect", assert => {
     var object = new DurationHelper({}); // default options
 
     assert.deepEqual(object.calculateTimestamp(0), [0,0,0], "calculateTimestamp returns 0hrs 0mins 0secs for duration 0s.");
@@ -116,13 +117,22 @@ QUnit.test("CalculateTimestampTest_DurationIsCorrect_TimestampElementsAreCorrect
     assert.deepEqual(object.calculateTimestamp(8397.1234), [2,19,57], "calculateTimestamp returns 2hrs 19mins 57secs for duration 8397.1234s.");
 });
 
+QUnit.test("CalculateTimestampTest_IncludeHoursOptionIsFalse_TimestampElementsAreCorrect", assert => {
+    var object = new DurationHelper({includeHours: false}); // includeHours option is disabled
+
+    assert.deepEqual(object.calculateTimestamp(3600), [0,60,0], "calculateTimestamp returns 0hrs 60mins 0secs for duration 3600s.");
+    assert.deepEqual(object.calculateTimestamp(3629), [0,60,29], "calculateTimestamp returns 0hrs 60mins 29secs for duration 3629s.");
+    assert.deepEqual(object.calculateTimestamp(3600.7854), [0,60,0], "calculateTimestamp returns correct values for float duration.");
+    assert.deepEqual(object.calculateTimestamp(8397.1234), [0,139,57], "calculateTimestamp returns 0hrs 139mins 57secs for duration 8397.1234s.");
+});
+
 /*
     ===========================================
     GETTIMESTAMP TESTS
     ===========================================
 */
 
-QUnit.test("GetTimestampTest_DurationIsCorrect_TimestampElementsAreCorrect", assert => {
+QUnit.test("GetTimestampTest_IncludeHoursOptionIsTrue_TimestampElementsAreCorrect", assert => {
     var object = new DurationHelper({}); // default options
 
     assert.equal(object.getTimestamp(0), "00:00:00", "getTimestamp returns 00:00:00 for duration 0s.");
@@ -132,5 +142,15 @@ QUnit.test("GetTimestampTest_DurationIsCorrect_TimestampElementsAreCorrect", ass
     assert.equal(object.getTimestamp(3629), "01:00:29", "getTimestamp returns 01:00:29 for duration 3629s.");
     assert.equal(object.getTimestamp(3600.7854), "01:00:00", "getTimestamp returns correct values for float duration.");
     assert.equal(object.getTimestamp(8397.1234), "02:19:57", "getTimestamp returns 02:19:57 for duration 8397.1234s.");
+});
+
+QUnit.test("GetTimestampTest_IncludeHoursOptionIsFalse_TimestampElementsAreCorrect", assert => {
+    var object = new DurationHelper({includeHours: false}); // default options
+
+    assert.equal(object.getTimestamp(3600), "60:00", "getTimestamp returns 60:00 for duration 3600s.");
+    assert.equal(object.getTimestamp(1778), "29:38", "getTimestamp returns 29:38 for duration 1778s.");
+    assert.equal(object.getTimestamp(3629), "60:29", "getTimestamp returns 60:29 for duration 3629s.");
+    assert.equal(object.getTimestamp(3600.7854), "60:00", "getTimestamp returns correct values for float duration.");
+    assert.equal(object.getTimestamp(8397.1234), "139:57", "getTimestamp returns 139:57 for duration 8397.1234s.");
 });
 

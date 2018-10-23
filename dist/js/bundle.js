@@ -390,10 +390,6 @@ exports.AudioTimestampsGenerator = AudioTimestampsGenerator;
 "use strict";
 
 
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -422,7 +418,8 @@ var DurationHelper = function () {
         key: "prefixZero",
         value: function prefixZero(number) {
             if (number < 0) throw new RangeError("Number must be not less than 0.");
-            if (number > 99) throw new RangeError("Number must be less than 100.");
+            //        if (number > 99)
+            //            throw new RangeError("Number must be less than 100.");
             var prefix = "";
             if (number < 10 && this.options.zeroPrefix) prefix = "0";
             return prefix + number;
@@ -433,11 +430,15 @@ var DurationHelper = function () {
     }, {
         key: "calculateTimestamp",
         value: function calculateTimestamp(duration) {
-            var hrs, mins, secs;
+            var hrs = 0,
+                mins = 0,
+                secs = 0;
             var durationLeft = Math.floor(duration); // convert to integer
 
-            hrs = Math.floor(durationLeft / 3600);
-            durationLeft -= hrs * 3600;
+            if (this.options.includeHours) {
+                hrs = Math.floor(durationLeft / 3600);
+                durationLeft -= hrs * 3600;
+            }
 
             mins = Math.floor(durationLeft / 60);
             durationLeft -= mins * 60;
@@ -452,7 +453,7 @@ var DurationHelper = function () {
     }, {
         key: "getTimestamp",
         value: function getTimestamp(duration) {
-            var timestamp; // duration converted to format: [HH:]MM:SS
+            var timestamp = ""; // duration converted to format: [HH:]MM:SS
 
             var _calculateTimestamp = this.calculateTimestamp(duration),
                 _calculateTimestamp2 = _slicedToArray(_calculateTimestamp, 3),
@@ -460,7 +461,8 @@ var DurationHelper = function () {
                 mins = _calculateTimestamp2[1],
                 secs = _calculateTimestamp2[2];
 
-            timestamp = this.prefixZero(hrs) + ":" + this.prefixZero(mins) + ":" + this.prefixZero(secs);
+            if (this.options.includeHours) timestamp += this.prefixZero(hrs) + ":";
+            timestamp += this.prefixZero(mins) + ":" + this.prefixZero(secs);
             return timestamp;
         }
     }]);
@@ -468,7 +470,9 @@ var DurationHelper = function () {
     return DurationHelper;
 }();
 
-exports.DurationHelper = DurationHelper;
+//export {
+//    DurationHelper
+//}
 
 /***/ }),
 

@@ -15,8 +15,8 @@ class DurationHelper {
     prefixZero(number) {
         if (number < 0)
             throw new RangeError("Number must be not less than 0.");
-        if (number > 99)
-            throw new RangeError("Number must be less than 100.");
+//        if (number > 99)
+//            throw new RangeError("Number must be less than 100.");
         var prefix = "";
         if (number < 10 && this.options.zeroPrefix)
             prefix = "0";
@@ -25,27 +25,35 @@ class DurationHelper {
 
     // helper method: calculates: hours, minutes and seconds number for given duration in seconds
     calculateTimestamp(duration) {
-        var hrs, mins, secs;
+        var hrs = 0,
+            mins = 0,
+            secs = 0;
         var durationLeft = Math.floor(duration); // convert to integer
 
-        hrs = Math.floor(durationLeft / 3600);
-        durationLeft -= (hrs * 3600);
+        if (this.options.includeHours) {
+            hrs = Math.floor(durationLeft / 3600);
+            durationLeft -= (hrs * 3600);
+        }
 
         mins = Math.floor(durationLeft / 60);
         durationLeft -= (mins * 60);
-        
+
         secs = durationLeft;
-        
+
         return [hrs, mins, secs];
     }
 
     // main function converting duration to [HH:]MM:SS format
     getTimestamp(duration) {
-        var timestamp; // duration converted to format: [HH:]MM:SS
+        var timestamp = ""; // duration converted to format: [HH:]MM:SS
         var [hrs, mins, secs] = this.calculateTimestamp(duration);
-        timestamp = `${this.prefixZero(hrs)}:${this.prefixZero(mins)}:${this.prefixZero(secs)}`;
+        if(this.options.includeHours)
+            timestamp += this.prefixZero(hrs) + ":";
+        timestamp += this.prefixZero(mins) + ":" + this.prefixZero(secs);
         return timestamp;
     }
 }
 
-export { DurationHelper }
+//export {
+//    DurationHelper
+//}
