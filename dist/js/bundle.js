@@ -148,6 +148,11 @@ var AudioFileModel = function () {
             this.timestamp = timestamp;
         }
     }, {
+        key: "getTimestamp",
+        value: function getTimestamp() {
+            return this.timestamp;
+        }
+    }, {
         key: "setConvertedTimestamp",
         value: function setConvertedTimestamp(convertedTimestamp) {
             this.convertedTimestamp = convertedTimestamp;
@@ -321,16 +326,23 @@ var AudioTimestampsGenerator = function () {
         key: 'calculateTimestamps',
         value: function calculateTimestamps() {
             console.log("Obliczam timestamps.");
-            var durationHelper = new _DurationHelper.DurationHelper(); // default options
             var timestamp = 0;
             [].forEach.call(this.models, function (model) {
                 model.setTimestamp(timestamp);
-                model.setConvertedTimestamp(durationHelper.getTimestamp(timestamp));
+                //            model.setConvertedTimestamp(durationHelper.getTimestamp(timestamp));
                 timestamp += model.getDuration();
                 model.printDuration();
             });
 
-            console.log('Czas ca\u0142kowity: ' + timestamp);
+            var options;
+            if (this.models[this.models.length - 1].getTimestamp() < 3600) options = { includeHours: false };else options = {};
+
+            var durationHelper = new _DurationHelper.DurationHelper(options); // default options
+            // set converted timestamps
+            [].forEach.call(this.models, function (model) {
+                timestamp = model.getTimestamp();
+                model.setConvertedTimestamp(durationHelper.getTimestamp(timestamp));
+            });
         }
     }, {
         key: 'createViews',
@@ -389,6 +401,10 @@ exports.AudioTimestampsGenerator = AudioTimestampsGenerator;
 
 "use strict";
 
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
 
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
@@ -470,9 +486,7 @@ var DurationHelper = function () {
     return DurationHelper;
 }();
 
-//export {
-//    DurationHelper
-//}
+exports.DurationHelper = DurationHelper;
 
 /***/ }),
 

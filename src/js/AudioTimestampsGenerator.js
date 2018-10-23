@@ -48,16 +48,26 @@ class AudioTimestampsGenerator {
     // calculate timestamps for each audio file
     calculateTimestamps() {
         console.log("Obliczam timestamps.");
-        var durationHelper = new DurationHelper(); // default options
         var timestamp = 0;
         [].forEach.call(this.models, model => {
             model.setTimestamp(timestamp);
-            model.setConvertedTimestamp(durationHelper.getTimestamp(timestamp));
+            //            model.setConvertedTimestamp(durationHelper.getTimestamp(timestamp));
             timestamp += model.getDuration();
             model.printDuration();
         });
 
-        console.log(`Czas całkowity: ${timestamp}`);
+        var options;
+        if (this.models[this.models.length - 1].getTimestamp() < 3600)
+            options = {includeHours: false};
+        else 
+            options = {};
+        
+        var durationHelper = new DurationHelper(options); // default options
+        // set converted timestamps
+        [].forEach.call(this.models, model => {
+            timestamp = model.getTimestamp();
+            model.setConvertedTimestamp(durationHelper.getTimestamp(timestamp));
+        });
     }
 
     createViews() {

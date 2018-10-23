@@ -54,6 +54,6 @@ class DurationHelper {
     }
 }
 
-//export {
-//    DurationHelper
-//}
+export {
+    DurationHelper
+}

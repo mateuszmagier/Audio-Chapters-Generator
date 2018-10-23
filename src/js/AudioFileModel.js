@@ -36,6 +36,10 @@ class AudioFileModel {
         this.timestamp = timestamp;
     }
     
+    getTimestamp() {
+        return this.timestamp;
+    }
+    
     setConvertedTimestamp(convertedTimestamp) {
         this.convertedTimestamp = convertedTimestamp;
     }
