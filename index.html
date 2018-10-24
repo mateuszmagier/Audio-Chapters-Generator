@@ -12,6 +12,11 @@
     <input id="files-input" type="file" accept=".mp3" / multiple>
     <label for="files-input">Wybierz plik</label>
     <div class="settings invisible">
+        <div class="settings-name-source">
+            Źródło etykiety:
+            <input type="radio" name="name-source" value="filename" checked>Nazwa pliku
+            <input type="radio" name="name-source" value="title">Tytuł utworu
+        </div>
         <input type="checkbox" id="settings-extension">
         <label for="settings-extension">Rozszerzenie</label>
     </div>

@@ -19,6 +19,7 @@ class AudioTimestampsGenerator {
     constructor(filesInputSelector) {
         this.input = document.querySelector(filesInputSelector); // input element used to attach audio files
         this.obtainedDurations = 0; // number of known durations of audio files
+        this.obtainedTitles = 0; // number of known titles of audio files
         this.attachedFilesNumber = 0; // number of files attached by user
         this.models = []; // array of AudioFileModel objects
         this.views = []; // array of AudioFileView objects
@@ -87,14 +88,27 @@ class AudioTimestampsGenerator {
     changeExtensionVisibility(isVisible) {
             [].forEach.call(this.views, view => view.setExtensionVisibility(isVisible));
     }
+    
+    changeLabelSource(source) {
+        console.log("Zmieniam źródło na: " + source);
+        [].forEach.call(this.views, view => view.changeLabelSource(source));
+    }
 
     // method called by AudioFileModel objects when audio's duration is obtained
     incrementObtainedDurations() {
         this.obtainedDurations++;
         console.log(this.obtainedDurations);
         if (this.obtainedDurations === this.attachedFilesNumber) { // check if model objects are ready to generate timestamps
-            console.log("Załadowano wszystkie.");
+            console.log("Załadowano wszystkie durations.");
             this.calculateTimestamps();
+        }
+    }
+    
+    // method called by AudioFileModel objects when audio's title is obtained
+    incrementObtainedTitles() {
+        this.obtainedTitles++;
+        if(this.obtainedTitles === this.attachedFilesNumber) { // all titles were obtained
+            console.log("Załadowano wszystkie titles.");
             this.createViews();
         }
     }

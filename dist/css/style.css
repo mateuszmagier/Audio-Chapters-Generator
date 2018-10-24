@@ -7,7 +7,7 @@ div.visible {
 span.visible {
   display: inline; }
 
-.audiofile .audiofile-filename {
-  padding-left: 10px; }
+.audiofile .audiofile-timestamp {
+  margin-right: 10px; }
 
 /*# sourceMappingURL=style.css.map */

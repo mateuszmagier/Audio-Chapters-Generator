@@ -33,6 +33,7 @@ class AudioFileModel {
             }
             else
                 console.log("Nie udało się odczytać metadanych pliku.");
+            this.controller.incrementObtainedTitles();
         };
 
         reader.readAsArrayBuffer(this.file);

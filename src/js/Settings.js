@@ -8,13 +8,17 @@ class Settings {
         this.settings.classList.add("visible");
 
         this.extensionVisibility = this.settings.querySelector("#settings-extension");
+        this.labelSourceRadios = this.settings.querySelectorAll("input[name=\"name-source\"]");
 
         this.registerEvents();
     }
 
     registerEvents() {
-        //        this.extensionVisibility.addEventListener("click", () => console.log(this.extensionVisibility.checked));
         this.extensionVisibility.addEventListener("click", () => this.controller.changeExtensionVisibility(this.extensionVisibility.checked));
+        
+        [].forEach.call(this.labelSourceRadios, radio => {
+            radio.addEventListener("click", () => this.controller.changeLabelSource(radio.value));
+        });
     }
 }
 

@@ -2631,6 +2631,7 @@ var AudioFileModel = function () {
                 if (metadata !== null) {
                     _this.title = metadata.title;
                 } else console.log("Nie udało się odczytać metadanych pliku.");
+                _this.controller.incrementObtainedTitles();
             };
 
             reader.readAsArrayBuffer(this.file);
@@ -2710,7 +2711,9 @@ var AudioFileView = function () {
         _classCallCheck(this, AudioFileView);
 
         this.model = model;
+        this.filename = null;
         this.extension = null;
+        this.title = null;
     }
 
     _createClass(AudioFileView, [{
@@ -2727,6 +2730,7 @@ var AudioFileView = function () {
             var element = document.createElement("span");
             element.classList.add("audiofile-filename");
             element.innerText = this.model.filename;
+            this.filename = element;
             return element;
         }
     }, {
@@ -2739,12 +2743,24 @@ var AudioFileView = function () {
             return element;
         }
     }, {
+        key: "createTitleElement",
+        value: function createTitleElement() {
+            var element = document.createElement("span");
+            element.classList.add("audiofile-title", "invisible");
+            element.innerText = this.model.title;
+            this.title = element;
+            return element;
+        }
+    }, {
         key: "createElement",
         value: function createElement() {
             var element = document.createElement("div");
             element.classList.add("audiofile");
             element.appendChild(this.createTimestampElement());
             element.appendChild(this.createFilenameElement());
+            console.log("Widok... title:" + this.model.title);
+            if (this.model.title !== null) // title was obtained from metadata
+                element.appendChild(this.createTitleElement());
             element.appendChild(this.createExtensionElement());
             return element;
         }
@@ -2752,6 +2768,22 @@ var AudioFileView = function () {
         key: "setExtensionVisibility",
         value: function setExtensionVisibility(isVisible) {
             if (isVisible) this.extension.classList.add("visible");else this.extension.classList.remove("visible");
+        }
+    }, {
+        key: "changeLabelSource",
+        value: function changeLabelSource(sourceName) {
+            switch (sourceName) {
+                case "filename":
+                    this.filename.classList.remove("invisible");
+                    this.title.classList.add("invisible");
+                    break;
+                case "title":
+                    this.filename.classList.add("invisible");
+                    this.title.classList.remove("invisible");
+                    break;
+                default:
+                    console.error("Unsupported label source name.");
+            }
         }
     }]);
 
@@ -2798,6 +2830,7 @@ var AudioTimestampsGenerator = function () {
 
         this.input = document.querySelector(filesInputSelector); // input element used to attach audio files
         this.obtainedDurations = 0; // number of known durations of audio files
+        this.obtainedTitles = 0; // number of known titles of audio files
         this.attachedFilesNumber = 0; // number of files attached by user
         this.models = []; // array of AudioFileModel objects
         this.views = []; // array of AudioFileView objects
@@ -2879,6 +2912,14 @@ var AudioTimestampsGenerator = function () {
                 return view.setExtensionVisibility(isVisible);
             });
         }
+    }, {
+        key: 'changeLabelSource',
+        value: function changeLabelSource(source) {
+            console.log("Zmieniam źródło na: " + source);
+            [].forEach.call(this.views, function (view) {
+                return view.changeLabelSource(source);
+            });
+        }
 
         // method called by AudioFileModel objects when audio's duration is obtained
 
@@ -2889,8 +2930,20 @@ var AudioTimestampsGenerator = function () {
             console.log(this.obtainedDurations);
             if (this.obtainedDurations === this.attachedFilesNumber) {
                 // check if model objects are ready to generate timestamps
-                console.log("Załadowano wszystkie.");
+                console.log("Załadowano wszystkie durations.");
                 this.calculateTimestamps();
+            }
+        }
+
+        // method called by AudioFileModel objects when audio's title is obtained
+
+    }, {
+        key: 'incrementObtainedTitles',
+        value: function incrementObtainedTitles() {
+            this.obtainedTitles++;
+            if (this.obtainedTitles === this.attachedFilesNumber) {
+                // all titles were obtained
+                console.log("Załadowano wszystkie titles.");
                 this.createViews();
             }
         }
@@ -3031,6 +3084,7 @@ var Settings = function () {
         this.settings.classList.add("visible");
 
         this.extensionVisibility = this.settings.querySelector("#settings-extension");
+        this.labelSourceRadios = this.settings.querySelectorAll("input[name=\"name-source\"]");
 
         this.registerEvents();
     }
@@ -3040,9 +3094,14 @@ var Settings = function () {
         value: function registerEvents() {
             var _this = this;
 
-            //        this.extensionVisibility.addEventListener("click", () => console.log(this.extensionVisibility.checked));
             this.extensionVisibility.addEventListener("click", function () {
                 return _this.controller.changeExtensionVisibility(_this.extensionVisibility.checked);
+            });
+
+            [].forEach.call(this.labelSourceRadios, function (radio) {
+                radio.addEventListener("click", function () {
+                    return _this.controller.changeLabelSource(radio.value);
+                });
             });
         }
     }]);
